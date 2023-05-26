@@ -1,1 +1,130 @@
-https://colab.research.google.com/drive/1JrrINsGMFizLpJHqVxZ1bfqF_SyrHaUB?usp=sharing
+! pip install experta
+from experta.engine import Agenda
+from experta import*
+class EnglishES(Fact):
+  pass
+
+class EnglishESKBA(KnowledgeEngine):
+
+  #Question 1 -----------------------------------------------------
+
+  @Rule (EnglishES(ques1=('moved')))
+  def answer1(self):
+
+     print("- Question1: Right! Good job")
+     #print("you earn a point\n")
+
+  @Rule (EnglishES(ques11=('move')))
+  def answer2(self):
+     print("- Question1: Wrong! It's a simple past")
+     #print("no point\n")
+
+  #Question 2-------------
+  @Rule(AND(EnglishES(ques2=('studied'))))
+  def answer3(self): 
+
+      print("- Question2: Right! Good job") 
+      #print("you earn a point\n") 
+ 
+  @Rule(OR(EnglishES(ques22=('study'))))
+  def answer4(self): 
+      print("- Question2: Wrong! It's a simple past") 
+      #print("no point\n") 
+
+  #Question 3-------------
+  @Rule(AND(EnglishES(ques3=('speak')),EnglishES(ques33=('spoke')))) 
+  def answer5(self): 
+      print("- Question3: Right! Good job") 
+
+  @Rule(AND(EnglishES(ques3a=('spoke')),EnglishES(ques33a=('spoke')))) 
+  def answer6(self): 
+      print("- Question3: The first blank is Wrong! ") 
+
+  @Rule(AND(EnglishES(ques3a=('speak')),EnglishES(ques33a=('speak')))) 
+  def answer7(self): 
+      print("- Question3: The second blank is Wrong! ") 
+
+  @Rule(AND(EnglishES(ques3a=('spoke')),EnglishES(ques33a=('speak')))) 
+  def answer8(self): 
+      print("- Question3: ALL of blanks are Wrong! ") 
+
+  #Question4-------------------------------------------------
+  @Rule (EnglishES(ques4=('n')))
+  def answer9(self):
+     print("- Question4: Right! Good job")
+    
+  @Rule (EnglishES(ques44=('v')))
+  def answer10(self):
+     print("- Question4: Wrong! It's a noun")
+
+     #Question5----------------
+  @Rule (EnglishES(ques5=('v')))
+  def answer11(self):
+     print("- Question5: Right! Good job")
+    
+  @Rule (EnglishES(ques55=('n')))
+  def answer12(self):
+     print("- Question5: Wrong! It's a verb")
+
+  #The result -----------------------------------------------
+  #Right answers ----------------------------------------------
+  @Rule (AND(EnglishES(ques1='moved'),EnglishES(ques2='studied'),
+       EnglishES(ques3='speak'),EnglishES(ques33='spoke'),EnglishES(ques4='n'),EnglishES(ques5='v')))
+  def answer13(self):
+    print("CONGRATS !!..All your answers are right, you can pass to level two.")
+
+    #Wrong answers------------------------------------------------
+  @Rule (NOT(AND(EnglishES(ques1='moved'),EnglishES(ques2='studied'),
+      (OR(EnglishES(ques3='speak'),EnglishES(ques33='spoke'))),EnglishES(ques4='n'),EnglishES(ques5='v'))))
+  def answer14(self):
+    print("SORRY.. This answer is wrong, you can't pass to level two.")
+
+
+engine = EnglishESKBA()
+
+engine.reset() # Prepare the engine for the execution.
+print("\n************************************ WELCOME MY FRIEND ***************************************\n")
+print("Let me give you the following quiz to test your knowledge in English Language\n")
+
+print("*Lets start with GRAMMER: ")
+print("  - Question1\n  They .... to London in 2013.")
+question1 = input("  Fill the blank (move|moved)? ").lower()
+print("\n")
+print("  - Question2\n  She .... English in school.") 
+question2 = input("  Fill the blank (study|studied)? ").lower()
+print("\n")
+print("  - Question3\n  She didn't .... English. She .... Tagalog.") 
+question3 = input("  Fill the first blank (speak|spoke)? ").lower()
+question33 = input("  Fill the second blank (speak|spoke)? ").lower()
+print("\n")
+#-----------------------
+print("*Know we will move to VOCABULARY 'word forms': ")
+print("  - Question4\n  I enjoy travel.")
+question4 = input("  Word 'travel' is a (N for noun|V for verb)?").lower()
+print("\n")
+
+print("  - Question5\n  Hard work results in success.")
+question5 = input("  Word 'result' is a (N for noun|V for verb)?").lower()
+
+engine.declare(EnglishES(ques11 = question1), EnglishES(ques22 = question2),EnglishES(ques3 = question3),
+               EnglishES(ques33 = question33),EnglishES(ques44 = question4),EnglishES(ques55 = question5))
+
+engine.declare(EnglishES(q1 = question1), EnglishES(q2 = question2),EnglishES(q3a = question3),EnglishES(q33a = question3),
+               EnglishES(q4 = question4), EnglishES(q5 = question5))
+
+print("\n-----------------------------------------------------------------------------")
+print("--------------------------------- The Results -------------------------------")
+print("-----------------------------------------------------------------------------")
+
+
+engine.declare(EnglishES(ques5 = question5), EnglishES(ques55 = question5))
+engine.declare(EnglishES(ques4 = question4), EnglishES(ques44 = question4))
+engine.declare(EnglishES(ques3a = question3), EnglishES(ques33a = question33))
+engine.declare(EnglishES(ques3 = question3), EnglishES(ques33 = question33))
+engine.declare(EnglishES(ques2 = question2), EnglishES(ques22 = question2)) 
+engine.declare(EnglishES(ques1 = question1), EnglishES(ques11 = question1))
+
+
+
+
+engine.run() # Run engine
